@@ -18,7 +18,7 @@ class Main():
     def __init__(self, root):
         self.root = root
         self.root.title("Main")
-        self.root.geometry("800x500+500+300")
+        self.root.geometry("400x500+500+300")
         self.root.configure(bg="white")
 
 
@@ -28,27 +28,35 @@ class Main():
 
         self.create_widgets()
         
-        
     def create_widgets(self):
-        self.frame_score = tk.Frame(self.root, bg="#e6e6fa", height=20, relief="solid")
-        self.frame_menu = tk.Frame(self.root, bg="white", relief="solid")
-        self.frame_mission = tk.Frame(self.root, bg="white", relief="solid")
-        self.frame_bottom = tk.Frame(self.root, bg="#afeeee", relief="solid")
+        self.frame_score = tk.Frame(self.root, bg="white", relief="solid", bd=1)
+        self.frame_menu = tk.Frame(self.root, bg="white", relief="solid", bd=1)
+        self.frame_mission = tk.Frame(self.root, bg="white", relief="solid", bd=1)
+        self.frame_bottom = tk.Frame(self.root, bg="white", relief="solid", bd=1)
 
-        self.frame_score.pack(side="top", fill="both", expand=False)
-        self.frame_menu.pack(side="left", fill="both", expand=False)
-        self.frame_mission.pack(side="right")
-        self.frame_bottom.pack(side="bottom")
+        self.frame_score.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        self.frame_menu.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+        # self.frame_mission.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
+        self.frame_bottom.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
 
-        self.label_score = tk.Label(self.frame_score, text="Score:", font=(FONT, 30), bg=None)
-        self.score = tk.Label(self.frame_score, font=(FONT, 20), bg=None)
+         # Add weight to rows and columns
+        self.root.grid_columnconfigure(0, weight=1)
+        # self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_rowconfigure(1, weight=1)
+        self.root.grid_rowconfigure(2, weight=1)
+
+
+
+        self.label_score = tk.Label(self.frame_score, text="Score:", font=(FONT, 30), bg="white")
+        self.score = tk.Label(self.frame_score, font=(FONT, 20), bg="white")
         self.score.config(text=self.scorefile["score"])
-        self.refresh = tk.Button(self.frame_score, text="Refresh", font=(FONT, 20), bg=None, command=self.refresh_score)
-        self.button_add = tk.Button(self.frame_menu, text="Add Scorer", font=(FONT, 20), bg=None, command=lambda: self.open_AddScorer(), width=20)
-        self.button_check = tk.Button(self.frame_menu, text="Check Scorer", font=(FONT, 20), bg=None, command=lambda: self.open_ViewScorer(), width=20)
-        self.button_shop = tk.Button(self.frame_menu, text="Shop", font=(FONT, 20), bg=None, command=lambda: self.open_Shop(), width=20)
-        self.button_history = tk.Button(self.frame_menu, text="History", font=(FONT, 20), bg=None, command=lambda: self.open_History(), width=20)
-        self.button_quit = tk.Button(self.frame_bottom, text="Quit", font=(FONT, 20), bg=None, command=self.quit, width=20)
+        self.refresh = tk.Button(self.frame_score, text="Refresh", font=(FONT, 20), bg="white", command=self.refresh_score)
+        self.button_add = tk.Button(self.frame_menu, text="Add Scorer/Prize", font=(FONT, 20), bg="white", command=lambda: self.open_Adder(), width=20)
+        self.button_check = tk.Button(self.frame_menu, text="View Scorer", font=(FONT, 20), bg="white", command=lambda: self.open_ViewScorer(), width=20)
+        self.button_shop = tk.Button(self.frame_menu, text="Shop", font=(FONT, 20), bg="white", command=lambda: self.open_Shop(), width=20)
+        self.button_history = tk.Button(self.frame_menu, text="History", font=(FONT, 20), bg="white", command=lambda: self.open_History(), width=20)
+        self.button_quit = tk.Button(self.frame_bottom, text="Quit", font=(FONT, 20), bg="white", command=self.quit, width=20)
 
         self.label_score.pack()
         self.score.pack()
@@ -64,21 +72,21 @@ class Main():
             self.scorefile = json.load(file)
         self.score.config(text=self.scorefile["score"])
 
-    def open_AddScorer(self):
+    def open_Adder(self):
         self.win = tk.Toplevel(self.root)
-        self.window = AddScorer(self.win, EVENTPATH, FONT)
+        self.window = Adder(self.win, EVENTPATH, SHOPPATH, FONT)
     
     def open_ViewScorer(self):
         self.win = tk.Toplevel(self.root)
-        self.window = ViewScorer(self.win, EVENTPATH, SCOREPATH, HISGETPATH)
+        self.window = ViewScorer(self.win, EVENTPATH, SCOREPATH, HISGETPATH, FONT)
     
     def open_Shop(self):
         self.win = tk.Toplevel(self.root)
-        self.window = Shop(self.win, SCOREPATH, SHOPPATH, HISPAYPATH)
+        self.window = Shop(self.win, SCOREPATH, SHOPPATH, HISPAYPATH, FONT)
     
     def open_History(self):
         self.win = tk.Toplevel(self.root)
-        self.window = History(self.win, HISGETPATH, HISPAYPATH)
+        self.window = History(self.win, HISGETPATH, HISPAYPATH, FONT)
 
     def quit(self):
         self.root.quit()

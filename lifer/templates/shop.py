@@ -16,7 +16,7 @@ class Shop():
     def __init__(self, root, SCOREPATH, SHOPPATH, HISPAYPATH, FONT="YuGothic"):
         self.root = root
         self.root.title("Shop")
-        self.root.geometry("600x500+500+200")
+        self.root.geometry("400x500+500+200")
         self.root.configure(bg="white")
         
         self.scorepath = SCOREPATH
@@ -30,11 +30,16 @@ class Shop():
         self.create_widgets()
 
     def create_widgets(self):
-        self.menu = tk.Menu(self.root, tearoff=0, activebackground="#000000")
+        frame = tk.Frame(self.root, bg="white", relief="solid", bd=1)
+        frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5) # フレームの設定と配置
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(0, weight=1)
+
+        self.menu = tk.Menu(frame, tearoff=0, activebackground="#000000")
         self.menu.add_command(label="Redeem", command=self.redeem)
         self.root.bind("<Button-2>", self.show_menu) 
 
-        self.tree = ttk.Treeview(self.root)
+        self.tree = ttk.Treeview(frame)
         self.tree["column"] = ("Prize", "Score")
         self.tree["show"] = "headings"
         
@@ -47,8 +52,12 @@ class Shop():
 
         for i in range(len(self.shoplist)):
             self.tree.insert("", "end", values=list(self.shoplist.iloc[i])) 
-        self.tree.pack()
+        self.tree.grid(row=0, column=0, sticky=tk.W + tk.E + tk.N + tk.S)
         
+        vscrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=lambda:self.tree.yview)
+        self.tree.configure(yscrollcommand=vscrollbar.set) # スクロールバー設定
+        vscrollbar.grid(row=0, column=1, sticky=tk.W + tk.E + tk.N + tk.S)
+
     def show_menu(self, e):
         region = self.tree.identify_region(e.x, e.y)
         

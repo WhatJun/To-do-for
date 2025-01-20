@@ -12,7 +12,7 @@ FONT = "YuGothinc"
 
 
 class ViewScorer():
-    def __init__(self, root, EVENTPATH, SCOREPATH, HISPATH):
+    def __init__(self, root, EVENTPATH, SCOREPATH, HISPATH, FONT="YuGothic"):
         self.root = root
         self.root.title("Check Scorer")
         self.root.geometry("600x500+500+200")
@@ -28,11 +28,16 @@ class ViewScorer():
         self.create_widgets()
 
     def create_widgets(self):
-        self.menu = tk.Menu(self.root, tearoff=0, activebackground="#000000")
+        frame = tk.Frame(self.root, bg="white", relief="solid", bd=1)
+        frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5) # フレームの設定と配置
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(0, weight=1)
+
+        self.menu = tk.Menu(frame, tearoff=0, activebackground="#000000")
         self.menu.add_command(label="Count", command=self.count_score)
         self.root.bind("<Button-2>", self.show_menu) # 右クリックによるメニュー表示をバインド
 
-        self.tree = ttk.Treeview(self.root)
+        self.tree = ttk.Treeview(frame)
         self.tree["column"] = ("Event", "Score")
         self.tree["show"] = "headings"
         
@@ -42,10 +47,14 @@ class ViewScorer():
         self.tree.column("Event", width=300)
         self.tree.column("Score", width=100, anchor="center")
 
-
         for i in range(len(self.csv)):
             self.tree.insert("", "end", values=list(self.csv.iloc[i]))
-        self.tree.pack()
+        self.tree.grid(row=0, column=0, sticky=tk.W + tk.E + tk.N + tk.S)
+
+        vscrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=lambda:self.tree.yview)
+        self.tree.configure(yscrollcommand=vscrollbar.set) # スクロールバー設定
+        vscrollbar.grid(row=0, column=1, sticky=tk.W + tk.E + tk.N + tk.S)
+        
         
     def show_menu(self, e):
         region = self.tree.identify_region(e.x, e.y)
